@@ -227,7 +227,7 @@ class PostalPerformanceCalculator:
 # ==========================================
 def main():
     st.set_page_config(page_title="郵政績效計算引擎", page_icon="📮", layout="wide")
-    st.title("📮 郵政年度績效衡量項目評分計算引擎")
+    st.title("📮 年度套餐項目評分計算引擎")#郵政年度績效衡量項目評分計算引擎
     st.markdown("支援上下限夾擠 (Clamping)、各指標獨立計算、加權匯總。")
 
     # 初始化計算器
