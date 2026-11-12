@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 # ==========================================
-# 1. 核心計算邏輯 (您的原始程式碼)
+# 1. 核心計算邏輯
 # ==========================================
 def clamp(val, min_v, max_v):
     """將數值限制在 [min_v, max_v] 區間"""
@@ -12,7 +12,6 @@ class PostalPerformanceCalculator:
     def __init__(self):
         self.results = {}
 
-    # (此處保留您的所有計算函式，為節省版面，邏輯皆與您提供的一致)
     def calc_post_expenditure(self, actual, budget):
         if budget == 0: return 80.0
         ratio = (actual / budget) * 100.0
@@ -271,3 +270,192 @@ def main():
 
         with col4:
             st.subheader("6. 郵費收入淨額 (權數 8)")
+            rev_curr = st.number_input("本年淨額", value=100.0)
+            rev_prev = st.number_input("上年淨額", value=100.0)
+
+            st.subheader("9. i郵箱業務推廣 (權數 2)")
+            ibox_slots = st.number_input("格數", value=10)
+            ibox_send = st.number_input("寄件數", value=370)
+            ibox_take = st.number_input("取件數", value=270)
+            ibox_viol = st.number_input("虛增違規次數", value=0)
+
+        st.subheader("7. 客戶關係管理 (權數 2)")
+        tier = st.selectbox("局等", ["特等", "一等甲", "一等乙", "二等甲", "二等乙"])
+        st.write("請輸入四季拜訪數據 (總拜訪數, 潛在拜訪數)")
+        q_data = []
+        c1, c2, c3, c4 = st.columns(4)
+        for i, col in enumerate([c1, c2, c3, c4]):
+            with col:
+                t_vis = st.number_input(f"Q{i+1} 總拜訪數", value=50, key=f"q{i}t")
+                p_vis = st.number_input(f"Q{i+1} 潛在拜訪數", value=5, key=f"q{i}p")
+                q_data.append((t_vis, p_vis))
+        crm_curr = st.number_input("本年特約貢獻", value=100.0)
+        crm_prev = st.number_input("去年特約貢獻", value=100.0)
+
+    with tabs[1]:
+        st.header("集郵與儲匯業務")
+        col1, col2 = st.columns(2)
+        with col1:
+            st.subheader("10. 集郵總收入 (權數 3)")
+            phil_a_act = st.number_input("集郵收入實際", value=100.0)
+            phil_a_tgt = st.number_input("集郵收入目標", value=100.0)
+            phil_b_act = st.number_input("個人化郵票實際", value=100.0)
+            phil_b_tgt = st.number_input("個人化郵票目標", value=100.0)
+            phil_c_act = st.number_input("降庫存實際", value=100.0)
+            phil_c_tgt = st.number_input("降庫存目標", value=100.0)
+
+            st.subheader("12. 存簿儲金 (權數 4)")
+            save_avg_act = st.number_input("日平均結存實際", value=95.0)
+            save_avg_tgt = st.number_input("日平均結存目標", value=100.0)
+            save_cnt_act = st.number_input("結存戶數本年", value=100.0)
+            save_cnt_prev = st.number_input("結存戶數去年", value=100.0)
+
+        with col2:
+            st.subheader("11. 網路/行動郵局用戶 (權數 2)")
+            ebank_net_act = st.number_input("網郵實際", value=100.0)
+            ebank_net_tgt = st.number_input("網郵目標", value=100.0)
+            ebank_mob_act = st.number_input("行郵實際", value=100.0)
+            ebank_mob_tgt = st.number_input("行郵目標", value=100.0)
+            
+            st.subheader("14. 郵政VISA金融卡 (權數 4)")
+            visa_fee_act = st.number_input("手續費實際", value=100.0)
+            visa_fee_tgt = st.number_input("手續費目標", value=100.0)
+            visa_act_rate = st.number_input("累計啟動率(%)", value=50.0)
+            visa_iss_act = st.number_input("核發實際", value=40.0)
+            visa_iss_tgt = st.number_input("核發目標", value=100.0)
+
+        st.subheader("13. 警示帳戶 (權數 3)")
+        alert_str = st.text_input("12個月每月比較值(用逗號分隔)", value="1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0")
+        try:
+            alert_ratios = [float(x.strip()) for x in alert_str.split(",")]
+        except:
+            alert_ratios = [1.0] * 12
+            st.warning("請確保填入 12 個數字並用逗號隔開。")
+        alert_pre = st.number_input("前置管制戶數", value=0)
+        alert_post = st.number_input("解除後警示戶數", value=0)
+
+        st.subheader("15. 行動支付新使用戶數 (權數 2)")
+        mp_cloud_act = st.number_input("雲支付實際", value=100.0)
+        mp_cloud_tgt = st.number_input("雲支付目標", value=100.0)
+        mp_link_act = st.number_input("綁定實際", value=100.0)
+        mp_link_tgt = st.number_input("綁定目標", value=100.0)
+
+    with tabs[2]:
+        st.header("壽險業務")
+        col1, col2 = st.columns(2)
+        with col1:
+            st.subheader("16. 新契約保費收入 (權數 7)")
+            life_new_act = st.number_input("新契約實際", value=75.0)
+            life_new_tgt = st.number_input("新契約目標", value=100.0)
+            
+            st.subheader("18. 網路及行動投保 (權數 2)")
+            life_web_act = st.number_input("網路投保實際", value=80.0)
+            life_web_tgt = st.number_input("網路投保目標", value=100.0)
+            life_mob_act = st.number_input("行動投保實際", value=80.0)
+            life_mob_tgt = st.number_input("行動投保目標", value=100.0)
+
+            st.subheader("20. 保單借款及壽險房貸 (權數 3)")
+            life_loan_int = st.number_input("保單借款達成率(%)", value=80.0)
+            life_loan_mort = st.number_input("壽險房貸達成率(%)", value=80.0)
+
+        with col2:
+            st.subheader("17. 保障型商品月保費占率 (權數 4)")
+            life_long_act = st.number_input("長保實際保費", value=40.0)
+            life_long_tgt = st.number_input("長保目標保費", value=100.0)
+            
+            st.subheader("19. 微型傷害保險附約 (權數 1)")
+            micro_norm = st.number_input("非身障達成率(%)", value=80.0)
+            micro_dis = st.number_input("身障達成率(%)", value=80.0)
+            micro_aug = st.checkbox("已達成 8 月底目標", value=True)
+
+            st.subheader("21. 契約脫落率 (權數 2)")
+            lapse_bur = st.number_input("局脫落率(%)", value=2.0, format="%.2f")
+            lapse_glb = st.number_input("全區脫落率(%)", value=2.0, format="%.2f")
+
+    with tabs[3]:
+        st.header("其他營運業務、工安、法遵與考評")
+        col1, col2 = st.columns(2)
+        with col1:
+            st.subheader("22. 資產營運收入 (權數 2)")
+            asset_goal = st.number_input("年度目標達成率(%)", value=100.0)
+            asset_curr = st.number_input("本年租金", value=100.0)
+            asset_prev = st.number_input("上年租金", value=100.0)
+
+            st.subheader("24. 職業安全 (權數 1)")
+            safe_curr = st.number_input("本年職災頻率", value=1.0)
+            safe_prev = st.number_input("前三年平均頻率", value=1.0)
+
+            st.subheader("26. 稽接考評 (權數 5)")
+            audit_risk = st.number_input("風險(35%)", value=100.0)
+            audit_ctrl = st.number_input("內控(45%)", value=100.0)
+            audit_legal = st.number_input("法遵稽核(15%)", value=100.0)
+            audit_asset = st.number_input("資產(2%)", value=100.0)
+            audit_fup = st.number_input("追蹤(3%)", value=100.0)
+
+        with col2:
+            st.subheader("23. 電子商務 (權數 2)")
+            ecom_ag = st.number_input("代售手續費達成率(%)", value=90.0)
+            ecom_ib = st.number_input("i郵購手續費達成率(%)", value=90.0)
+
+            st.subheader("25. 法令遵循 (權數 3)")
+            legal_deduct = st.number_input("各項法規扣分總和", value=0.0)
+
+            st.subheader("27 & 28. 服務品質與綜合考評")
+            sq_unann = st.number_input("為民服務不定期考核", value=80.0)
+            sq_prompt = st.number_input("妥投率(%)", value=98.0)
+            sq_cult = st.number_input("企業文化活動", value=80.0)
+            
+            comp_em = st.number_input("緊急事件(20%)", value=100.0)
+            comp_out = st.number_input("外部關注(20%)", value=100.0)
+            comp_err = st.number_input("重大缺失(20%)", value=100.0)
+            comp_oth = st.number_input("其他(40%)", value=100.0)
+
+    # 執行所有計算
+    calc.calc_post_expenditure(exp_act, exp_tgt)
+    calc.calc_personnel_cost(pers_act, pers_tgt)
+    calc.calc_annual_leave_rate(leave_taken, leave_total)
+    calc.calc_employee_productivity(prod_act, prod_tgt)
+    calc.calc_mail_operating_ratio(mail_op_curr, mail_op_prev)
+    calc.calc_postage_net_revenue(rev_curr, rev_prev)
+    calc.calc_crm(tier, q_data, crm_curr, crm_prev)
+    calc.calc_mail_delivery_volume(deliv_curr, deliv_prev)
+    calc.calc_ibox_promotion(ibox_slots, ibox_send, ibox_take, ibox_viol)
+    calc.calc_philately_revenue(phil_a_act, phil_a_tgt, phil_b_act, phil_b_tgt, phil_c_act, phil_c_tgt)
+    calc.calc_ebanking_users(ebank_net_act, ebank_net_tgt, ebank_mob_act, ebank_mob_tgt)
+    calc.calc_savings_deposit(save_avg_act, save_avg_tgt, save_cnt_act, save_cnt_prev)
+    calc.calc_alert_accounts(alert_ratios, tier, alert_pre, alert_post)
+    calc.calc_visa_debit_card(visa_fee_act, visa_fee_tgt, visa_act_rate, visa_iss_act, visa_iss_tgt)
+    calc.calc_mobile_payments(mp_cloud_act, mp_cloud_tgt, mp_link_act, mp_link_tgt)
+    calc.calc_life_new_premium(life_new_act, life_new_tgt)
+    calc.calc_long_term_protection_share(life_long_act, life_long_tgt)
+    calc.calc_online_life_contracts(life_web_act, life_web_tgt, life_mob_act, life_mob_tgt)
+    calc.calc_micro_insurance(micro_norm, micro_dis, micro_aug)
+    calc.calc_life_loan(life_loan_int, life_loan_mort)
+    calc.calc_lapse_rate(lapse_bur, lapse_glb)
+    calc.calc_asset_operation(asset_goal, asset_curr, asset_prev)
+    calc.calc_ecommerce(ecom_ag, ecom_ib)
+    calc.calc_occupational_safety(safe_curr, safe_prev)
+    calc.calc_legal_compliance(legal_deduct)
+    calc.set_audit_evaluation(audit_risk, audit_ctrl, audit_legal, audit_asset, audit_fup)
+    calc.set_service_quality(sq_unann, sq_prompt, sq_cult)
+    calc.set_comprehensive_evaluation(comp_em, comp_out, comp_err, comp_oth)
+
+    # 結算與結果展示
+    with tabs[4]:
+        st.header("📈 計算結果總表")
+        total_score, total_weight = calc.calculate_total_performance()
+        
+        st.metric("總加權得分", f"{total_score} 分", f"總計權數: {total_weight}%")
+        
+        # 將字典轉換為 DataFrame 顯示表格
+        df_results = pd.DataFrame.from_dict(calc.results, orient="index")
+        df_results.reset_index(inplace=True)
+        df_results.columns = ["衡量指標", "單項得分 (Score)", "指標權重 (%)"]
+        
+        # 增加一欄計算該項的加權得分
+        df_results["加權後分數"] = round(df_results["單項得分 (Score)"] * (df_results["指標權重 (%)"] / 100), 3)
+        
+        st.dataframe(df_results, use_container_width=True)
+
+if __name__ == "__main__":
+    main()
